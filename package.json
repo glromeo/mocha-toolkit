@@ -1,0 +1,65 @@
+{
+  "name": "mocha-toolkit",
+  "version": "1.0.0",
+  "description": "Mocha, chai, sinon and other stuff useful for everyday testing",
+  "main": "lib/index.js",
+  "repository": "git@github.com:glromeo/mocha-toolkit.git",
+  "author": "Gianluca Romeo <glromeo@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "lib/index.js",
+    "lib/index.d.ts"
+  ],
+  "keywords": [
+    "mocha",
+    "chai",
+    "sinon",
+    "mock",
+    "require",
+    "test",
+    "benchmark"
+  ],
+  "dependencies": {
+    "@types/benchmark": "^2.1.1",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.7.1",
+    "@types/sinon": "^10.0.2",
+    "@types/sinon-chai": "^3.2.5",
+    "benchmark": "^2.1.4",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.0",
+    "nyc": "^15.1.0",
+    "sinon": "^11.1.2",
+    "sinon-chai": "^3.7.0",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "prepublish": "tsc",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "nyc mocha test/**/*.test.ts",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "test/**/*.ts"
+    ],
+    "reporter": [
+      "text"
+    ],
+    "all": false,
+    "cache": true
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register"
+    ]
+  }
+}
