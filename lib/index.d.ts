@@ -7,9 +7,9 @@ declare global {
 export { assert, expect } from "chai";
 export { match, spy, stub, mock, fake } from "sinon";
 export { chai, sinon };
-export declare function mockquire(request: string, stub: any, requireOptions?: {
+export declare function mockquire<T extends object>(request: string, stub: T, requireOptions?: {
     paths: string[];
-}): void;
+}): T;
 export declare function unrequire(module: string, requireOptions?: {
     paths: string[];
 }): void;

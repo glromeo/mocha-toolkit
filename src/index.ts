@@ -28,12 +28,12 @@ export {
     sinon
 };
 
-const mockRequests:Record<string, string> = {};
+const mocks:Record<string, string> = {};
 
 const _module = require("module");
 const _resolveFilename = _module._resolveFilename;
 _module._resolveFilename = function ():string {
-    return mockRequests[arguments[0]] ?? _resolveFilename.apply(_module, arguments);
+    return mocks[arguments[0]] ?? _resolveFilename.apply(_module, arguments);
 };
 
 /**
@@ -43,23 +43,23 @@ _module._resolveFilename = function ():string {
  * @param stub
  * @param requireOptions
  */
-export function mockquire(request: string, stub: any, requireOptions = {paths: [callerDirname()]}) {
+export function mockquire<T extends object>(request: string, stub: T, requireOptions = {paths: [callerDirname()]}):T {
     try {
         const resolved = require.resolve(request, requireOptions);
         delete require.cache[resolved];
         require(resolved);
         const cached = require.cache[resolved]!;
-        cached.exports = new Proxy(cached.exports, {
+        return cached.exports = new Proxy(cached.exports, {
             get(target: any, p: string) {
                 if (stub.hasOwnProperty(p)) {
-                    return stub[p];
+                    return stub[p as keyof T];
                 } else {
                     return target[p];
                 }
             }
         });
     } catch (e) {
-        mockRequests[request] = `mockquire:${request}`;
+        mocks[request] = `mockquire:${request}`;
         const resolved = require.resolve(request, requireOptions);
         require.cache[resolved] = {
             id: resolved,
@@ -67,10 +67,11 @@ export function mockquire(request: string, stub: any, requireOptions = {paths: [
             loaded: true,
             exports: stub
         } as NodeModule;
+        return stub;
     }
 }
 
-export function unrequire(module: string, requireOptions = {paths: [callerDirname()]}) {
+export function unrequire(module: string, requireOptions = {paths: [callerDirname()]}):void {
     delete require.cache[require.resolve(module, requireOptions)];
 }
 
