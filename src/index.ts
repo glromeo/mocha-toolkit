@@ -1,13 +1,34 @@
-import chai from "chai";
-import path from "path";
-import sinon from "sinon";
+import * as mocha from "mocha";
+import * as chai from "chai";
+import * as path from "path";
+import * as sinon from "sinon";
 import sinon_chai from "sinon-chai";
+import {RequestInfo, RequestInit, Response} from "node-fetch";
+
+import log from "tiny-node-logger";
+
+export {
+    describe,
+    before,
+    beforeEach,
+    after,
+    afterEach,
+    it,
+    xit,
+} from "mocha";
 
 chai.use(sinon_chai);
 
 declare global {
+    var describe: typeof mocha.describe;
+    var before: typeof mocha.before;
+    var beforeEach: typeof mocha.beforeEach;
+    var after: typeof mocha.after;
+    var afterEach: typeof mocha.afterEach;
+    var it: typeof mocha.it;
+    var xit: typeof mocha.xit;
     var assert: typeof chai.assert;
-    var expect: typeof chai.expect
+    var expect: typeof chai.expect;
 }
 
 global.assert = chai.assert;
@@ -28,11 +49,23 @@ export {
     sinon
 };
 
-const mocks:Record<string, string> = {};
+export function nolog() {
+
+    before(async function () {
+        this.writer = log.writer;
+        log.writer = () => true;
+    });
+
+    after(function () {
+        log.writer = this.writer;
+    });
+}
+
+const mocks: Record<string, string> = {};
 
 const _module = require("module");
 const _resolveFilename = _module._resolveFilename;
-_module._resolveFilename = function ():string {
+_module._resolveFilename = function (): string {
     return mocks[arguments[0]] ?? _resolveFilename.apply(_module, arguments);
 };
 
@@ -43,7 +76,7 @@ _module._resolveFilename = function ():string {
  * @param stub
  * @param requireOptions
  */
-export function mockquire<T extends object>(request: string, stub: T, requireOptions = {paths: [callerDirname()]}):T {
+export function mockquire<T extends object>(request: string, stub: T, requireOptions = {paths: [callerDirname()]}): T {
     try {
         const resolved = require.resolve(request, requireOptions);
         delete require.cache[resolved];
@@ -71,11 +104,16 @@ export function mockquire<T extends object>(request: string, stub: T, requireOpt
     }
 }
 
-export function unrequire(module: string, requireOptions = {paths: [callerDirname()]}):void {
+export function unrequire(module: string, requireOptions = {paths: [callerDirname()]}): void {
     delete require.cache[require.resolve(module, requireOptions)];
 }
 
-function stacktrace():NodeJS.CallSite[] {
+export async function reimport<T>(module: string, requireOptions = {paths: [callerDirname()]}):Promise<T> {
+    unrequire(module, requireOptions);
+    return import(module);
+}
+
+function stacktrace(): NodeJS.CallSite[] {
     const prepareStackTrace = Error.prepareStackTrace;
     Error.prepareStackTrace = function captureOnce(_, stack) {
         Error.prepareStackTrace = prepareStackTrace;
@@ -89,4 +127,16 @@ function callerDirname(depth: number = 1) {
     let frame = stack[2 + (isNaN(depth) ? 1 : Math.min(depth, stack.length - 2))];
     let filename = frame?.getFileName();
     return filename ? path.dirname(filename) : process.cwd();
+}
+
+if (!globalThis.fetch) {
+    Object.defineProperty(globalThis, "fetch", {
+        enumerable: true,
+        configurable: true,
+        value: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
+            const {default: fetch} = await eval(`import("node-fetch")`); // https://github.com/microsoft/TypeScript/issues/43329
+            Object.defineProperty(globalThis, "fetch", {enumerable: true, value: fetch});
+            return fetch(url, init);
+        }
+    });
 }

@@ -4,15 +4,15 @@
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "outDir": "lib",
     "preserveConstEnums": true,
     "removeComments": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2017"
+    "target": "ESNext"
   },
   "ts-node": {
     "transpileOnly": true
