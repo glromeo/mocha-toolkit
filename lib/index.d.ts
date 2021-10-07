@@ -16,7 +16,6 @@ declare global {
 export { assert, expect } from "chai";
 export { match, spy, stub, mock, fake } from "sinon";
 export { chai, sinon };
-export declare function nolog(): void;
 export declare function mockquire<T extends object>(request: string, stub: T, requireOptions?: {
     paths: string[];
 }): T;

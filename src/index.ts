@@ -5,8 +5,6 @@ import * as sinon from "sinon";
 import sinon_chai from "sinon-chai";
 import {RequestInfo, RequestInit, Response} from "node-fetch";
 
-import log from "tiny-node-logger";
-
 export {
     describe,
     before,
@@ -48,18 +46,6 @@ export {
     chai,
     sinon
 };
-
-export function nolog() {
-
-    before(async function () {
-        this.writer = log.writer;
-        log.writer = () => true;
-    });
-
-    after(function () {
-        log.writer = this.writer;
-    });
-}
 
 const mocks: Record<string, string> = {};
 
