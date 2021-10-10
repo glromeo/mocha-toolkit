@@ -2,7 +2,6 @@ import * as mocha from "mocha";
 import * as chai from "chai";
 import * as path from "path";
 import * as sinon from "sinon";
-import sinon_chai from "sinon-chai";
 import {RequestInfo, RequestInit, Response} from "node-fetch";
 
 export {
@@ -15,7 +14,8 @@ export {
     xit,
 } from "mocha";
 
-chai.use(sinon_chai);
+chai.use(require("sinon-chai"));
+chai.use(require("chai-datetime"));
 
 declare global {
     var describe: typeof mocha.describe;
