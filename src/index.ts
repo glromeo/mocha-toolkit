@@ -120,7 +120,8 @@ if (!globalThis.fetch) {
         enumerable: true,
         configurable: true,
         value: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
-            const {default: fetch} = await eval(`import("node-fetch")`); // https://github.com/microsoft/TypeScript/issues/43329
+            // https://github.com/microsoft/TypeScript/issues/43329
+            const {default: fetch} = await eval(`import("node-fetch")`);
             Object.defineProperty(globalThis, "fetch", {enumerable: true, value: fetch});
             return fetch(url, init);
         }
