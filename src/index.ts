@@ -4,6 +4,9 @@ import * as path from "path";
 import * as sinon from "sinon";
 import {RequestInfo, RequestInit, Response} from "node-fetch";
 
+import "sinon-chai";
+import "chai-datetime";
+
 export {
     describe,
     before,
