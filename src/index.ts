@@ -5,6 +5,7 @@ import * as sinon from "sinon";
 import {RequestInfo, RequestInit, Response} from "node-fetch";
 
 import "sinon-chai";
+import "chai-string";
 import "chai-datetime";
 
 export {
@@ -18,6 +19,7 @@ export {
 } from "mocha";
 
 chai.use(require("sinon-chai"));
+chai.use(require("chai-string"));
 chai.use(require("chai-datetime"));
 
 declare global {

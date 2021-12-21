@@ -2,6 +2,7 @@ import * as mocha from "mocha";
 import * as chai from "chai";
 import * as sinon from "sinon";
 import "sinon-chai";
+import "chai-string";
 import "chai-datetime";
 export { describe, before, beforeEach, after, afterEach, it, xit, } from "mocha";
 declare global {
