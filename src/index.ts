@@ -2,7 +2,6 @@ import * as mocha from "mocha";
 import * as chai from "chai";
 import * as path from "path";
 import * as sinon from "sinon";
-import {RequestInfo, RequestInit, Response} from "node-fetch";
 
 import "sinon-chai";
 import "chai-string";
@@ -118,17 +117,4 @@ function callerDirname(depth: number = 1) {
     let frame = stack[2 + (isNaN(depth) ? 1 : Math.min(depth, stack.length - 2))];
     let filename = frame?.getFileName();
     return filename ? path.dirname(filename) : process.cwd();
-}
-
-if (!globalThis.fetch) {
-    Object.defineProperty(globalThis, "fetch", {
-        enumerable: true,
-        configurable: true,
-        value: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
-            // https://github.com/microsoft/TypeScript/issues/43329
-            const {default: fetch} = await eval(`import("node-fetch")`);
-            Object.defineProperty(globalThis, "fetch", {enumerable: true, value: fetch});
-            return fetch(url, init);
-        }
-    });
 }
