@@ -17,8 +17,8 @@ export {
     xit,
 } from "mocha";
 
-chai.use(require("sinon-chai"));
-chai.use(require("chai-string"));
+chai.use(require("sinon-chai").default);
+chai.use(require("chai-string").default);
 chai.use(require("chai-datetime"));
 
 declare global {
